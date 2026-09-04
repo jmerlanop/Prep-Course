@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b5d4b">
+<title>Cuestionario Energía Solar Térmica · Turno 1</title>
+<style>
+:root{--bg:#f4f7f6;--card:#fff;--ink:#17322c;--muted:#64746f;--brand:#0b5d4b;--brand2:#0f7c64;--ok:#137a3f;--bad:#b42318;--line:#dce6e2;--soft:#e9f5f1;--warn:#fff6df;}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.45}
+button{font:inherit}
+.app{max-width:880px;margin:auto;min-height:100vh;padding-bottom:90px}
+.hero{background:linear-gradient(135deg,#083f35,#0b6d57);color:white;padding:22px 18px 18px}
+.hero h1{font-size:clamp(22px,5vw,34px);margin:0 0 8px;line-height:1.15}
+.hero p{margin:4px 0;color:#d7eee7}
+.badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.badge{background:#ffffff1c;border:1px solid #ffffff3b;border-radius:999px;padding:6px 10px;font-size:13px}
+.sticky{position:sticky;top:0;z-index:10;background:#f4f7f6e8;backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:10px 12px}
+.progressline{height:8px;background:#dfe8e5;border-radius:99px;overflow:hidden}
+.progressbar{height:100%;width:0;background:var(--brand2);transition:width .25s}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}
+.stat{background:white;border:1px solid var(--line);border-radius:10px;padding:8px 6px;text-align:center}
+.stat b{display:block;font-size:17px}
+.stat span{font-size:11px;color:var(--muted)}
+.wrap{padding:14px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 5px 18px #193c3210}
+.qmeta{display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:13px;margin-bottom:8px}
+.question{font-size:clamp(18px,4.5vw,23px);font-weight:750;line-height:1.35;margin:8px 0 18px}
+.options{display:grid;gap:10px}
+.opt{width:100%;text-align:left;border:1.5px solid var(--line);background:white;border-radius:14px;padding:13px 14px;display:flex;gap:10px;align-items:flex-start;cursor:pointer;transition:.15s}
+.opt:hover{border-color:#8dbfb0;background:#fbfefd}
+.opt:active{transform:scale(.995)}
+.letter{flex:0 0 30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#eef4f2;font-weight:800;color:var(--brand)}
+.opt.chosen{border-color:var(--brand);background:var(--soft)}
+.opt.correct{border-color:#55a676;background:#eef9f2}
+.opt.wrong{border-color:#d98b84;background:#fff1ef}
+.opt[disabled]{cursor:default}
+.feedback{display:none;margin-top:16px;border-radius:14px;padding:14px 15px}
+.feedback.show{display:block}
+.feedback.ok{background:#edf8f1;border:1px solid #b9dec7}
+.feedback.bad{background:#fff0ee;border:1px solid #efc1bb}
+.feedback .title{font-weight:800;margin-bottom:5px}
+.feedback .small{color:var(--muted);font-size:13px;margin-top:8px}
+.nav{display:flex;gap:10px;margin-top:18px}
+.nav button,.toolbar button,.sharebtn{border:0;border-radius:12px;padding:11px 14px;font-weight:700;cursor:pointer}
+.primary{background:var(--brand);color:white}
+.secondary{background:#e8efed;color:var(--ink)}
+.nav button:disabled{opacity:.45;cursor:not-allowed}
+.index{margin-top:14px;display:grid;grid-template-columns:repeat(8,1fr);gap:6px}
+.index button{aspect-ratio:1;border:1px solid var(--line);background:white;border-radius:8px;font-weight:700;color:var(--muted);cursor:pointer}
+.index button.current{outline:2px solid var(--brand);color:var(--brand)}
+.index button.answered{background:#e5f4ef;color:var(--brand);border-color:#a8d3c7}
+.index button.badans{background:#ffebe8;color:var(--bad);border-color:#efb7b0}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.toolbar button{background:white;border:1px solid var(--line)}
+.note{background:var(--warn);border:1px solid #ecd699;border-radius:14px;padding:12px 14px;margin-top:14px;font-size:13px;color:#604b16}
+.final{display:none;margin-top:14px;background:white;border:1px solid var(--line);border-radius:18px;padding:18px}
+.final.show{display:block}
+.final .scorebig{font-size:42px;font-weight:900;color:var(--brand);margin:2px 0}
+.review{margin-top:12px;display:grid;gap:8px}
+.review-item{border:1px solid var(--line);border-radius:10px;padding:10px;font-size:14px}
+.fixed-bottom{position:fixed;left:0;right:0;bottom:0;background:#ffffffed;border-top:1px solid var(--line);padding:10px max(12px,env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));z-index:20}
+.fixed-inner{max-width:880px;margin:auto;display:flex;gap:8px}
+.fixed-inner button{flex:1;border:0;border-radius:12px;padding:12px;font-weight:800}
+@media(max-width:600px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .index{grid-template-columns:repeat(5,1fr)}
+  .wrap{padding:10px}
+  .panel{padding:15px;border-radius:15px}
+  .hero{padding-top:18px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="hero">
+    <h1>Cuestionario · Energía Solar Térmica</h1>
+    <p>Banco del primer turno · 40 preguntas · 0,25 puntos cada una</p>
+    <div class="badges">
+      <span class="badge">Total: 10,00 puntos</span>
+      <span class="badge">Retroalimentación inmediata</span>
+      <span class="badge">Compatible con celular</span>
+    </div>
+  </header>
+
+  <div class="sticky">
+    <div class="progressline"><div id="progressbar" class="progressbar"></div></div>
+    <div class="stats">
+      <div class="stat"><b id="answered">0/40</b><span>Respondidas</span></div>
+      <div class="stat"><b id="correct">0</b><span>Correctas</span></div>
+      <div class="stat"><b id="wrong">0</b><span>Incorrectas</span></div>
+      <div class="stat"><b id="score">0,00</b><span>Puntos /10</span></div>
+    </div>
+  </div>
+
+  <main class="wrap">
+    <section class="panel">
+      <div class="qmeta"><span id="qnum">Pregunta 1 de 40</span><span>Valor: 0,25</span></div>
+      <div id="question" class="question"></div>
+      <div id="options" class="options"></div>
+      <div id="feedback" class="feedback"></div>
+      <div class="nav">
+        <button id="prev" class="secondary">← Anterior</button>
+        <button id="next" class="primary">Siguiente →</button>
+      </div>
+      <div id="index" class="index"></div>
+    </section>
+
+    <div class="toolbar">
+      <button id="restart">↻ Reiniciar intento</button>
+      <button id="share">⤴ Compartir</button>
+    </div>
+
+    <div class="note">
+      Este cuestionario contiene únicamente las 40 preguntas recibidas hoy en las imágenes, el video y el documento del primer turno. Las opciones marcadas por otros estudiantes no se tomaron automáticamente como respuestas correctas.
+    </div>
+
+    <section id="final" class="final">
+      <div style="color:var(--muted);font-size:13px">RESULTADO FINAL</div>
+      <div id="finalScore" class="scorebig">0,00 / 10,00</div>
+      <div id="finalText"></div>
+      <div id="review" class="review"></div>
+    </section>
+  </main>
+</div>
+
+<div class="fixed-bottom">
+  <div class="fixed-inner">
+    <button id="bottomPrev" class="secondary">← Anterior</button>
+    <button id="bottomNext" class="primary">Siguiente →</button>
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [{"n": 1, "q": "¿Cuáles son las características principales de los Discos parabólicos?", "options": {"A": "Concentrador paraboloide de 5 a 12 metros, Receptor de foco puntual. Seguimiento en 2 ejes. Temperatura de operación 600°C – 800°C.", "B": "No sabe o no contesta.", "C": "Concentrador paraboloide de 1 a 3 metros, Receptor de foco lineal. Seguimiento en 2 ejes. Temperatura de operación 600°C – 800°C.", "D": "Concentrador paraboloide de 5 a 12 metros, Receptor de foco lineal. Seguimiento en 1 eje. Temperatura de operación 125°C – 400°C.", "E": "Concentrador paraboloide de 5 a 12 metros, Receptor de foco lineal. Seguimiento en 1 ejes. Temperatura de operación 200°C – 400°C."}, "selected": null, "correct": "A", "explanation": "Los discos parabólicos son concentradores de foco puntual, con seguimiento en dos ejes y temperaturas de operación del orden de 600–800 °C."}, {"n": 2, "q": "Los colectores solares planos con cubierta de vidrio, resultan idóneos para:", "options": {"A": "No sabe, no contesta.", "B": "Agua caliente sanitaria y aplicaciones de calor industrial a 250°C.", "C": "Calefacción y agua calienta sanitaria.", "D": "Frío solar y calefacción solar.", "E": "Climatización de piscinas externas y calor industrial."}, "selected": "B", "correct": "C", "explanation": "Los captadores planos con cubierta de vidrio son apropiados para ACS y apoyo a calefacción, dentro de su rango habitual de baja temperatura."}, {"n": 3, "q": "¿Cuál es el ciclo termodinámico que se utiliza en los generadores de discos parabólicos para la producción de electricidad?", "options": {"A": "Stirling.", "B": "Rankine.", "C": "No sabe, no contesta.", "D": "Brayton.", "E": "Carnot."}, "selected": "A", "correct": "A", "explanation": "En los sistemas disco parabólico, el motor térmico característico para producir electricidad es el Stirling."}, {"n": 4, "q": "El criterio de separación entre filas adyacentes de los colectores cilindros parabólicos sea igual a tres veces el ancho de la parábola es para:", "options": {"A": "No sabe, no contesta.", "B": "Ninguna de las otras tres opciones.", "C": "Disminuir las pérdidas ópticas.", "D": "Disminuir las pérdidas geométricas.", "E": "Disminuir las pérdidas térmicas."}, "selected": "B", "correct": "D", "explanation": "La separación entre filas reduce el sombreado entre colectores, que se considera una pérdida geométrica."}, {"n": 5, "q": "En los sistemas solares de torre central con seguimiento de 2 ejes, ¿Qué implica?", "options": {"A": "No sabe, no contesta.", "B": "Menor requerimiento de terreno, es necesario aplanar el terreno; mejor empleo de la radiación solar directa y mayores inversiones.", "C": "Mayor requerimiento de terreno, no es necesario aplanar el terreno; mejor empleo de la radiación solar directa y mayores inversiones.", "D": "Menor requerimiento de terreno, no es necesario aplanar el terreno; mejor empleo de la radiación solar directa y menores inversiones.", "E": "Igual requerimiento de terreno, es necesario aplanar el terreno; mejor empleo de la radiación solar directa y menores inversiones."}, "selected": "C", "correct": "C", "explanation": "El seguimiento en dos ejes mejora el aprovechamiento de la radiación directa, exige mayor superficie de terreno y mayor inversión, sin requerir necesariamente aplanar el terreno."}, {"n": 6, "q": "¿Cuáles son las principales diferencias de los receptores volumétricos respecto a los receptores tubulares?", "options": {"A": "Superficies de absorción de la radiación y de transferencia al fluido no son la mismas, trabajan a mayor concentración (menores pérdidas térmicas) y gran superficie de transferencia.", "B": "Superficies de absorción de la radiación y de transferencia al fluido son diferentes, trabajan a igual concentración (menores pérdidas térmicas) y gran superficie de transferencia.", "C": "No sabe o no contesta.", "D": "Superficies de absorción de la radiación y transferencia al fluido son menores, trabajan a igual concentración (menores pérdidas térmicas) y gran superficie de transferencia.", "E": "Superficies de absorción de la radiación y de transferencia al fluido son la mismas, trabajan a mayor concentración (menores pérdidas térmicas) y gran superficie de transferencia."}, "selected": "A", "correct": "E", "explanation": "En el receptor volumétrico, la superficie que absorbe la radiación también transfiere calor al fluido; además trabaja a mayor concentración y ofrece gran superficie de transferencia."}, {"n": 7, "q": "Los fluidos de trabajos utilizados en los colectores solares cilindro parabólico son:", "options": {"A": "Aceites térmicos, agua y mezclas anticongelantes.", "B": "No sabe, no contesta.", "C": "Aceites térmicos, anticongelantes y gases nobles.", "D": "Aceites orgánicos, agua y mezclas anticongelantes.", "E": "Aceites orgánicos, agua y aire."}, "selected": "C", "correct": "A", "explanation": "Los fluidos de trabajo indicados para CSCP incluyen aceites térmicos, agua y mezclas anticongelantes."}, {"n": 8, "q": "Los tubos receptores de vacío para colectores solares cilindro-parabólicos, consta en realidad de dos tubos: uno interior metálico absorbedor (por el que circula el fluido) y otro exterior de cristal ¿Qué función tiene el tubo exterior de cristal?", "options": {"A": "Proteger el recubrimiento selectivo del ambiente y reducir las pérdidas térmicas por convección del tubo absorbedor.", "B": "Proteger el cableado eléctrico y reducir las pérdidas térmicas por convección del tubo absorbedor.", "C": "No sabe, no contesta.", "D": "Proteger el recubrimiento selectivo del ambiente y reducir las pérdidas hidráulicas por rozamiento del tubo absorbedor.", "E": "Proteger el recubrimiento selectivo del ambiente y reducir las pérdidas por radiación-conducción del tubo absorbedor."}, "selected": "A", "correct": "A", "explanation": "La cubierta exterior de vidrio protege el recubrimiento selectivo y, junto con el vacío, reduce las pérdidas térmicas por convección."}, {"n": 9, "q": "¿Cuál es la configuración del flujo bifásico agua líquida/vapor en una tubería horizontal del colector cilindro parabólico, que tiene un buen coeficiente de transferencia de calor en toda la superficie interna del tubo y evita grandes gradientes térmicos?", "options": {"A": "Anular.", "B": "Disperso.", "C": "No sabe, no contesta.", "D": "Estratificado.", "E": "Intermitente."}, "selected": "D", "correct": "B", "explanation": "El régimen disperso proporciona buen coeficiente de transferencia en toda la superficie interna del tubo y evita grandes gradientes térmicos."}, {"n": 10, "q": "El receptor central es uno de los componentes más importante de los sistemas de torre central. ¿Cuál es la función del Receptor Central?", "options": {"A": "No sabe, no contesta.", "B": "Absorber la radiación solar concentrada por los heliostatos, transformarla en energía térmica y transferir al fluido caloportador.", "C": "Absorber la radiación solar concentrada por los espejos, transformarla en energía eléctrica.", "D": "Absorber la radiación solar concentrada por as lentes de fresnel, transformarla en energía térmica mecánica.", "E": "Absorber la radiación solar concentrada por los espejos, transformarla en energía hidráulica del fluido caloportador."}, "selected": "B", "correct": "B", "explanation": "El receptor central absorbe la radiación concentrada por los heliostatos, la convierte en energía térmica y la transfiere al fluido caloportador."}, {"n": 11, "q": "Un La Generación Directa de Vapor (GDV) es un procedimiento directo para producir vapor con colectores solares cilindro-parabólicos. ¿Cuáles son las 3 zonas del proceso?", "options": {"A": "Zona de precalentamiento del agua, zona de evaporación y zona de cambio de fase.", "B": "No sabe, no contesta.", "C": "Zona de evaporación, zona de recirculación y zona del condensación.", "D": "Zona de evaporación, zona de sobrecalentamiento del vapor y zona de condensación.", "E": "Zona de precalentamiento del agua, zona de evaporación y zona de sobrecalentamiento del vapor."}, "selected": "A", "correct": "E", "explanation": "La GDV se desarrolla en tres zonas: precalentamiento del agua, evaporación y sobrecalentamiento del vapor."}, {"n": 12, "q": "¿Cuáles se puden considerar algunas ventajas de la Generación Directa de Vapor frente a la Generación Indirecta en los sistemas de colectores solares cilindro-parabólicos?", "options": {"A": "No sabe, no contesta", "B": "Igual riesgo ambiental, posibilidad de aumentar la temperatura máxima de vapor y configuración de la planta más compleja.", "C": "Menor riesgo ambiental, posibilidad de aumentar la temperatura máxima de vapor y se simplifica la configuración de la planta.", "D": "Menor riesgo ambiental, posibilidad de aumentar la temperatura máxima de vapor y configuración de la planta más compleja..", "E": "Menor riesgo ambiental, posibilidad de aumentar la temperatura del condensado de vapor y se simplifica la configuración de la planta."}, "selected": null, "correct": "C", "explanation": "La GDV reduce el riesgo ambiental asociado a aceites térmicos, permite elevar la temperatura máxima del vapor y simplifica la configuración de la planta."}, {"n": 13, "q": "¿Cómo se puede calcular la irradiancia global sobre el plano horizontal?", "options": {"A": "La suma de la irradiancia difusa horizontal y la irradiancia directa sobre plano horizontal.", "B": "La suma de la irradiancia extraterrestre y la irradiancia directa sobre plano horizontal.", "C": "No sabe, no contesta.", "D": "La suma de la irradiancia difusa horizontal y la irradiancia reflejada inclinada.", "E": "La suma de la irradiancia reflejada horizontal y la irradiancia directa sobre plano horizontal."}, "selected": "A", "correct": "A", "explanation": "La irradiancia global horizontal es la suma de la irradiancia difusa horizontal y la componente directa sobre el plano horizontal."}, {"n": 14, "q": "¿Qué es el factor de capacidad en el diseño de una central solar de torre?", "options": {"A": "La cantidad de energía térmica que puede almacenar el almacenamiento térmico en relación con la potencia eléctrica nominal de la instalación.", "B": "Energía producida por el campo solar dividida por la energía producida por la planta hubiera durante todo el año.", "C": "El número de horas al año que es capaz de operar la planta a su potencia nominal.", "D": "Energía producida por la planta en un año dividida por la energía producida si la planta hubiera operado a su máxima capacidad durante todo el año.", "E": "No sabe, no contesta."}, "selected": "D", "correct": "D", "explanation": "El factor de capacidad compara la energía realmente producida en un año con la que se produciría operando todo el año a potencia nominal."}, {"n": 15, "q": "La temperatura máxima de trabajo de los aceites térmicos actualmente disponibles para colectores cilindros parabólicos está en el entorno de:", "options": {"A": "800°C.", "B": "No sabe, no contesta.", "C": "300°C.", "D": "200°C.", "E": "400°C."}, "selected": "A", "correct": "E", "explanation": "El límite práctico de los aceites térmicos usados en CSCP está alrededor de 390–400 °C."}, {"n": 16, "q": "Fuera de las zonas tropicales y ecuatoriales terrestres hay que inclinar los captadores solares hacia:", "options": {"A": "El norte en el hemisferio norte y al sur en el hemisferio sur.", "B": "No sabe, no contesta.", "C": "El norte en ambos hemisferios terrestre.", "D": "El sur en ambos hemisferios terrestre.", "E": "El sur en el hemisferio norte y al norte en el hemisferio sur."}, "selected": "E", "correct": "E", "explanation": "Fuera de la zona tropical, los captadores se orientan hacia el ecuador: al sur en el hemisferio norte y al norte en el hemisferio sur."}, {"n": 17, "q": "Los Hornos Solares es uno de los campos de la energía solar para pruebas y tratamiento de materiales. Un horno solar de alta concentración está formado por:", "options": {"A": "Un sistema colector solar sin seguimiento (tubos al vacío) y un sistema estático de concentración en el punto focal (en un área pequeña).", "B": "No sabe o no contesta.", "C": "Un sistema colector solar con seguimiento (helióstatos de facetas planas) y un sistema estático de concentración en el punto focal (en un área pequeña).", "D": "Un sistema colector solar sin seguimiento (espejos cóncavos) y un sistema estático de concentración en el punto focal (en un área grande).", "E": "Un sistema colector solar con seguimiento (discos parabólicos) y un sistema estático de concentración en el punto focal (en un área lineal media)."}, "selected": "E", "correct": "C", "explanation": "Un horno solar de alta concentración combina un campo colector con seguimiento, normalmente heliostatos, con un concentrador estático que concentra en un foco pequeño."}, {"n": 18, "q": "¿Qué captadores solares deben estar inclinados como mínimo un ángulo de 25° con respecto a la horizontal, independientemente de su localización geográfica?", "options": {"A": "Los captadores solares del tipo Concentrador Parabólico Compuesto (CPC).", "B": "Los captadores de tubo evacuado tipo tubo de calor (heat-pipe).", "C": "Los captadores de tubo evacuado de circulación directa.", "D": "Los captadores de placa plana con cubierta de vidrio.", "E": "No sabe, no contesta"}, "selected": "E", "correct": "B", "explanation": "Los captadores de tubo evacuado tipo heat-pipe requieren una inclinación mínima para favorecer el retorno del condensado por gravedad."}, {"n": 19, "q": "¿Cuáles son los principales tipos de receptores de torre central en plantas solares de alta temperatura?", "options": {"A": "Exterior, De cavidad, Volumétrico y Lecho fluido.", "B": "Interior hueco, De cavidad, Volumétrico y Lecho fluido.", "C": "No sabe o no contesta.", "D": "Interior, De cavidad, Volumétrico y Lecho sólido.", "E": "Interior, De cavidad, Superficial y Lecho sólido."}, "selected": "A", "correct": "A", "explanation": "Los principales receptores de torre central se clasifican como exterior, de cavidad, volumétrico y de lecho fluido."}, {"n": 20, "q": "El Concentrador Parabólico Compuesto (CPC) consiste en una superficie reflectiva (óptica que no genera imagen) que permite concentrar la radiación solar:", "options": {"A": "Con necesidad de seguimiento.", "B": "Sin necesidad de seguimiento.", "C": "No sabe, no contesta.", "D": "Con seguimiento en dos ejes.", "E": "Con seguimiento en un eje N-S o E-O."}, "selected": "D", "correct": "B", "explanation": "El CPC es una óptica no formadora de imagen que puede concentrar radiación dentro de su ángulo de aceptación sin seguimiento continuo."}, {"n": 21, "q": "¿Qué es un horno solar?", "options": {"A": "Sistemas de foco puntual para experimentación en materiales y tratamientos no fotónicos (comerciales).", "B": "Sistemas de foco lineal para experimentación en materiales y tratamientos fotónicos (no comerciales).", "C": "No sabe, no contesta.", "D": "Sistemas de foco puntual para experimentación en materiales y tratamientos fotónicos (no comerciales).", "E": "Sistemas de foco lineal para experimentación en materiales y tratamientos fotónicos (comerciales)."}, "selected": "D", "correct": "D", "explanation": "Un horno solar es un sistema de foco puntual usado principalmente para experimentación y tratamiento de materiales, no como equipo comercial de generación."}, {"n": 22, "q": "La distancia (separación) entre filas del campo de colectores solares planos se calcula al mediodía solar cuando el Sol tiene su altura mínima en torno al:", "options": {"A": "21 de diciembre (hemisferio norte) y 21 de junio (hemisferio sur).", "B": "21 de marzo (hemisferio norte) y 21 de junio (hemisferio sur).", "C": "31 de diciembre (hemisferio norte) y 21 de julio (hemisferio sur).", "D": "No sabe, no contesta.", "E": "24 de diciembre (hemisferio norte) y 21 de marzo (hemisferio sur)."}, "selected": "A", "correct": "A", "explanation": "La separación entre filas se calcula para la condición de menor altura solar al mediodía, cercana al solsticio de invierno de cada hemisferio."}, {"n": 23, "q": "Bloque de potencia de la central solar de torre. Sistemas de foco puntual. ¿Cuáles son los ciclos termodinámicos que se utilizan en las centrales solares de torre central?", "options": {"A": "Rankine y Stirling.", "B": "No sabe, no contesta.", "C": "Rankine y Brayton.", "D": "Carnot.", "E": "Brayton y Stirling."}, "selected": "C", "correct": "C", "explanation": "En centrales de torre central se emplean principalmente ciclos Rankine y Brayton."}, {"n": 24, "q": "Las denominadas “pérdidas ópticas” permiten definir el Rendimiento Óptico, ηopt. del colector solar cilindro-parabólicos. ¿Cuáles son estos cuatro (4) factores “pérdidas ópticas”?", "options": {"A": "Reflectividad del tubo metálico del absorbente, factor de interceptación, transmisividad de la cubierta de vidrio y absortividad de los espejos.", "B": "Reflectividad de los absorbedores, factor de interceptación, transmisividad de la cubierta de vidrio y absortividad de los espejos.", "C": "Reflectividad de la cubierta de vidrios, factor de interceptación, transmisividad de los espejos y absortividad del recubrimiento selectivo.", "D": "Reflectividad de los espejos, factor de interceptación, transmisividad de la cubierta de vidrio y absortividad del recubrimiento selectivo del absorbedor.", "E": "No sabe, no contesta."}, "selected": "D", "correct": "D", "explanation": "El rendimiento óptico depende de la reflectividad de los espejos, el factor de interceptación, la transmisividad del vidrio y la absortividad del recubrimiento selectivo."}, {"n": 25, "q": "¿Qué factores limitan en la práctica la razón de concentración?", "options": {"A": "El tamaño aparente de la esfera solar de 32°, los concentradores reales son perfectos y funcionales y solo se puede concentrar la radiación solar sin directa.", "B": "El tamaño aparente de la esfera solar de 62’, las imperfecciones ópticas del concentrador y solo se puede concentrar la radiación solar directa.", "C": "No sabe, no contesta.", "D": "El tamaño aparente de la esfera solar de 62’, las imperfecciones ópticas del concentrador y solo se puede concentrar la radiación solar difusa.", "E": "El tamaño aparente de la esfera solar de 32’, las imperfecciones ópticas del concentrador y solo se puede concentrar la radiación solar directa."}, "selected": "B", "correct": "E", "explanation": "La concentración está limitada por el tamaño aparente del Sol de unos 32 minutos de arco, las imperfecciones ópticas y el hecho de que solo se concentra la radiación directa."}, {"n": 26, "q": "Las pérdidas en un receptor solar, conocidas como \"desbordamiento o spillage\", consisten en:", "options": {"A": "Ninguna de las tres opciones mencionadas.", "B": "El exceso de radiación respecto a la radiación nominal del receptor.", "C": "En pérdida de la radiación concentrada en los alrededores del receptor solar y que no es absorbida por el mismo.", "D": "La radiación solar que cae en el espacio entre heliostato y heliostato.", "E": "No sabe, no contesta."}, "selected": "B", "correct": "C", "explanation": "El spillage es la radiación concentrada que cae alrededor del receptor y no llega a ser absorbida por este."}, {"n": 27, "q": "Los Concentradores Lineales Fresnel (CLF) tienen posibles ventajas frente a los Colectores Solares Cilindro-parabólico. Puede identificar algunas de ellas:", "options": {"A": "Espejos y estructuras más ligeras y económicas, receptores más económicos (sin soldaduras vidrio-metal y vacío) y ausencia de juntas rotativas.", "B": "Espejos y estructuras más ligeras y económicas, receptores muy tecnológicos (con soldaduras láseres) y flexos giratorios.", "C": "No sabe, no contesta.", "D": "Espejos y estructuras más pesadas pero económicas, receptores tecnológicos (sin soldaduras vidrio-metal y vacío) y ausencia de juntas rotativas.", "E": "Espejos y estructuras más pesadas pero económicas, receptores con IA (con soldaduras láseres) y mangueras flexibles de aluminio."}, "selected": "A", "correct": "A", "explanation": "Los CLF pueden usar espejos y estructuras más ligeros, receptores más económicos y evitar juntas rotativas."}, {"n": 28, "q": "Para la selección de la bomba de calor, una vez calculado el caudal (depende del área de captación de los colectores solares) se debe tener en cuenta:", "options": {"A": "El volumen del vaso de expansión.", "B": "Las pérdidas de carga (presión) de toda la instalación solar.", "C": "No sabe, no contesta.", "D": "Las pérdidas de temperatura de toda la instalación solar.", "E": "Las ganancias de cargas por la fuerza de gravedad de toda la instalación solar."}, "selected": "B", "correct": "B", "explanation": "Una vez conocido el caudal, la bomba se selecciona considerando la pérdida de carga total que debe vencer en la instalación."}, {"n": 29, "q": "Para realizar el diseño básico de un sistema solar con colectores cilindro-parabólicos se necesita definir el Punto de Diseño. ¿Identifique algunas de las variables?", "options": {"A": "No sabe, no contesta.", "B": "Orientación del eje de giro de los colectores, ubicación, día del año y hora, irradiancia directa y ángulo de Incidencia.", "C": "Inclinación de los colectores, ubicación, día del año y hora, irradiancia directa y ángulo horario.", "D": "Inclinación de los colectores, ubicación, día del año y hora, irradiancia difusa y altura solar.", "E": "Orientación del eje de giro de los colectores, ubicación, día del año y hora, irradiancia total y ángulo horario."}, "selected": "B", "correct": "B", "explanation": "El punto de diseño incluye orientación del eje, ubicación, fecha y hora, irradiancia directa y ángulo de incidencia."}, {"n": 30, "q": "La elección del tipo de colector solar térmico más apropiado para una aplicación específica depende del:", "options": {"A": "Rango de variación diaria de la temperatura ambiente.", "B": "Intervalo diario de la irradiación solar incidente.", "C": "Intervalo de operación requerido (temperaturas de uso).", "D": "Del ángulo de inclinación de los colectores solares de la instalación.", "E": "No sabe, no contesta."}, "selected": "B", "correct": "C", "explanation": "La elección del captador depende principalmente del intervalo de temperaturas que exige la aplicación."}, {"n": 31, "q": "El rango de temperaturas de posibles aplicaciones de los colectores solares cilindro-parabólicos es muy amplio y van:", "options": {"A": "No sabe, no contesta.", "B": "Desde 125°C a 300°C. Para generar frio solar.", "C": "Desde 125°C a 400°C. Para procesos industriales.", "D": "Desde 30°C a 90°C. Para ACS y Calefacción.", "E": "Desde 125°C a 250°C. Para generar electricidad."}, "selected": "C", "correct": "C", "explanation": "Los CSCP se emplean aproximadamente entre 125 y 400 °C en aplicaciones de media temperatura y procesos industriales."}, {"n": 32, "q": "Los Sistemas de almacenamiento térmico de sistemas de colectores solares cilindro-parabólicos tienen las ventajas siguientes:", "options": {"A": "Aumenta las horas de suministro ACS y permite alimentar procesos térmicos a potencia variable.", "B": "Aumenta las horas de suministro energético y permite alimentar procesos térmicos a potencia constante.", "C": "No sabe, no contesta.", "D": "Disminuye las horas de suministro energético y permite alimentar procesos térmicos a potencia constante.", "E": "Aumenta las horas de suministro energético y permite alimentar procesos eléctricos."}, "selected": "B", "correct": "B", "explanation": "El almacenamiento térmico extiende las horas de suministro y permite alimentar procesos a potencia más estable o constante."}, {"n": 33, "q": "¿Cuál es la tarea de la superficie óptica del Heliostato?", "options": {"A": "Reflejar y concentrar la radiación solar incidente hacia el motor Sterling receptor.", "B": "Reflejar y concentrar la radiación solar incidente hacia el espejo lineal del absorbedor.", "C": "Reflejar y concentrar la radiación solar incidente hacia el tubo lineal absorbedor.", "D": "Reflejar y concentrar la radiación solar incidente hacia el receptor central.", "E": "No sabe, no contesta."}, "selected": "A", "correct": "D", "explanation": "La superficie óptica del heliostato refleja la radiación solar hacia el receptor central situado en la torre."}, {"n": 34, "q": "El ángulo de incidencia en un colector cilindro-parabólico es el formado por:", "options": {"A": "El vector normal al plano de apertura y el vector solar (radiación solar directa).", "B": "El eje de orientación del colector solar y el vector solar (radiación solar directa).", "C": "El vector normal al plano de apertura y el eje de giro del colector.", "D": "El vector solar y la línea Norte-Sur.", "E": "No sabe, no contesta."}, "selected": "B", "correct": "A", "explanation": "El ángulo de incidencia es el ángulo entre el vector solar y la normal al plano de apertura del colector."}, {"n": 35, "q": "Para una diferencia de temperatura fija entre el absorbedor y el ambiente, la eficiencia del captador solar se incrementa con:", "options": {"A": "No sabe, no contesta", "B": "La invariabilidad de la irradiancia reflejada incidente..", "C": "El aumento de la irradiancia global incidente.", "D": "La disminución de la irradiancia global incidente.", "E": "Ninguna de las tres anteriores."}, "selected": "D", "correct": "C", "explanation": "Con una diferencia de temperatura fija, al aumentar la irradiancia incidente disminuye el peso relativo de las pérdidas y aumenta la eficiencia."}, {"n": 36, "q": "Además de las pérdidas ópticas y geométricas, en un Colector Solar Cilindro-parabólico, también, existen pérdidas térmicas. ¿Cuáles son las pérdidas térmicas que tienen lugar en el tubo absorbedor?", "options": {"A": "PQ, cableado eléctrica, PQ, absorbedor vídrio, PQ, vidrio ambiente y PQ, → → → sol fluido. →", "B": "No sabe, no contesta.", "C": "PQ, absorbedor espejos, PQ, absorbedor vídrio, PQ, vidrio fluido y PQ, → → → sol vidrio. →", "D": "PQ, absorbedor ambiente, PQ, absorbedor vídrio, PQ, vidrio ambiente y PQ, → → → sol vidrio. →", "E": "PQ, fluidor vidrio, PQ, absorbedor espejo, PQ, vidrio ambiente y PQ, → → → sol vidrio."}, "selected": "D", "correct": "D", "explanation": "Las pérdidas térmicas consideradas son absorbedor→ambiente, absorbedor→vidrio, vidrio→ambiente y la energía solar absorbida por el vidrio."}, {"n": 37, "q": "La eficiencia del colector solar plano cuando las pérdidas térmicas son nulas (temperatura media del colector es igual a la temperatura ambiente) se denomina:", "options": {"A": "Eficiencia radiactiva.", "B": "Eficiencia convectiva.", "C": "Eficiencia óptica.", "D": "No sabe, no contesta.", "E": "Eficiencia conductiva."}, "selected": "D", "correct": "C", "explanation": "Cuando no existen pérdidas térmicas, el rendimiento del captador coincide con su eficiencia óptica."}, {"n": 38, "q": "En una instalación solar térmica las pérdidas térmicas se producen sobre todo por la noche, en el acumulador solar. Por eso es tan importante que tenga:", "options": {"A": "No sabe, no contesta.", "B": "Un buen aislamiento térmico.", "C": "Una buena conexión hidráulica.", "D": "Un buen sistema anticorrosión.", "E": "Una buena pintura anticorrosiva."}, "selected": "B", "correct": "B", "explanation": "Un buen aislamiento térmico del acumulador reduce las pérdidas de calor, especialmente durante la noche."}, {"n": 39, "q": "¿Qué puntos claves tienen los sistemas solares de torre central?", "options": {"A": "Concentración media (implica eficiencia de la planta), campo Solar (formado por heliostatos y lentes lineales de frenel) y receptor (en lo alto de la torre).", "B": "No sabe, no contesta.", "C": "Alta concentración (implica eficiencia de la planta), campo Solar (formado por heliostatos y lentes de frenel) y receptor lineal.", "D": "Alta concentración (implica mayor eficiencia de la planta), campo solar (formado por heliostatos) y receptor (en lo alto de la torre).", "E": "Alta concentración (implica eficiencia de la planta), campo Solar (formado por colectores solares cilindro-parabólicos) y receptor (en lo alto de la torre)."}, "selected": "A", "correct": "D", "explanation": "La torre central se caracteriza por alta concentración, campo de heliostatos y receptor ubicado en lo alto de la torre."}, {"n": 40, "q": "La instalación adicional de un sistema de aire acondicionado mediante energía solar térmica de baja temperatura para el verano:", "options": {"A": "Reduce la fracción solar del sistema ACS+Calefacción.", "B": "Requiere un cambio del ángulo de inclinación del captador a lo largo del año.", "C": "Permite mejorar la eficiencia de uso de sistema solar ACS+Calefacción.", "D": "No sabe, no contesta.", "E": "Multiplica por dos el área requerida de captación solar."}, "selected": "C", "correct": "C", "explanation": "El frío solar de verano aprovecha mejor la instalación ACS+calefacción durante una época en la que suele existir excedente de energía solar."}];
+const KEY='solar_termica_turno1_20260904_v1';
+let state={current:0,answers:{}};
+try{ const saved=JSON.parse(localStorage.getItem(KEY)); if(saved && saved.answers) state=saved; }catch(e){}
+const $=s=>document.querySelector(s);
+const el={qnum:$('#qnum'),question:$('#question'),options:$('#options'),feedback:$('#feedback'),answered:$('#answered'),correct:$('#correct'),wrong:$('#wrong'),score:$('#score'),progressbar:$('#progressbar'),prev:$('#prev'),next:$('#next'),bottomPrev:$('#bottomPrev'),bottomNext:$('#bottomNext'),index:$('#index'),final:$('#final'),finalScore:$('#finalScore'),finalText:$('#finalText'),review:$('#review')};
+
+function save(){localStorage.setItem(KEY,JSON.stringify(state));}
+function fmt(n){return n.toFixed(2).replace('.',',');}
+function calc(){
+  const ans=state.answers;
+  let c=0,w=0;
+  for(const q of QUESTIONS){
+    if(ans[q.n]){ if(ans[q.n]===q.correct)c++; else w++; }
+  }
+  return {answered:c+w,correct:c,wrong:w,score:c*0.25};
+}
+function renderStats(){
+  const s=calc();
+  el.answered.textContent=`${s.answered}/40`;
+  el.correct.textContent=s.correct;
+  el.wrong.textContent=s.wrong;
+  el.score.textContent=fmt(s.score);
+  el.progressbar.style.width=`${(s.answered/40)*100}%`;
+  renderIndex();
+  if(s.answered===40) renderFinal();
+}
+function renderIndex(){
+  el.index.innerHTML='';
+  QUESTIONS.forEach((q,i)=>{
+    const b=document.createElement('button');
+    b.textContent=q.n;
+    if(i===state.current)b.classList.add('current');
+    if(state.answers[q.n]){
+      b.classList.add(state.answers[q.n]===q.correct?'answered':'badans');
+    }
+    b.onclick=()=>{state.current=i;save();render();window.scrollTo({top:0,behavior:'smooth'});};
+    el.index.appendChild(b);
+  });
+}
+function choose(letter){
+  const q=QUESTIONS[state.current];
+  if(state.answers[q.n]) return;
+  state.answers[q.n]=letter;
+  save(); render();
+}
+function render(){
+  const q=QUESTIONS[state.current];
+  el.qnum.textContent=`Pregunta ${q.n} de 40`;
+  el.question.textContent=q.q;
+  el.options.innerHTML='';
+  const selected=state.answers[q.n];
+  Object.entries(q.options).forEach(([letter,text])=>{
+    const b=document.createElement('button');
+    b.className='opt';
+    b.innerHTML=`<span class="letter">${letter}</span><span>${escapeHtml(text)}</span>`;
+    if(selected){
+      b.disabled=true;
+      if(letter===q.correct)b.classList.add('correct');
+      if(letter===selected && selected!==q.correct)b.classList.add('wrong');
+      if(letter===selected)b.classList.add('chosen');
+    }
+    b.onclick=()=>choose(letter);
+    el.options.appendChild(b);
+  });
+  if(selected){
+    const ok=selected===q.correct;
+    el.feedback.className='feedback show '+(ok?'ok':'bad');
+    el.feedback.innerHTML=`<div class="title">${ok?'✅ ¡CORRECTO! +0,25 puntos':'❌ INCORRECTO +0,00 puntos'}</div>
+      ${ok?'':`<div><b>Respuesta correcta:</b> ${q.correct}. ${escapeHtml(q.options[q.correct])}</div>`}
+      <div class="small">${escapeHtml(q.explanation)}</div>`;
+  }else{
+    el.feedback.className='feedback';
+    el.feedback.innerHTML='';
+  }
+  const first=state.current===0,last=state.current===QUESTIONS.length-1;
+  el.prev.disabled=el.bottomPrev.disabled=first;
+  el.next.textContent=el.bottomNext.textContent=last?'Ver resultado':'Siguiente →';
+  renderStats();
+}
+function goPrev(){if(state.current>0){state.current--;save();render();window.scrollTo({top:0,behavior:'smooth'});}}
+function goNext(){
+  if(state.current<QUESTIONS.length-1){state.current++;save();render();window.scrollTo({top:0,behavior:'smooth'});}
+  else{renderFinal();el.final.scrollIntoView({behavior:'smooth'});}
+}
+function renderFinal(){
+  const s=calc();
+  el.final.classList.add('show');
+  el.finalScore.textContent=`${fmt(s.score)} / 10,00`;
+  const pct=(s.correct/40)*100;
+  el.finalText.innerHTML=`<b>${s.correct} correctas</b> · ${s.wrong} incorrectas · ${pct.toFixed(1).replace('.',',')}% de acierto.`;
+  const wrongQs=QUESTIONS.filter(q=>state.answers[q.n] && state.answers[q.n]!==q.correct);
+  el.review.innerHTML=wrongQs.length?'<b>Preguntas para repasar:</b>':'<b>¡Todas correctas!</b>';
+  wrongQs.forEach(q=>{
+    const d=document.createElement('div'); d.className='review-item';
+    d.innerHTML=`<b>Pregunta ${q.n}</b><br>${escapeHtml(q.q)}<br><span style="color:var(--bad)">Tu respuesta: ${state.answers[q.n]}</span> · <span style="color:var(--ok)">Correcta: ${q.correct}</span>`;
+    el.review.appendChild(d);
+  });
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
+el.prev.onclick=el.bottomPrev.onclick=goPrev;
+el.next.onclick=el.bottomNext.onclick=goNext;
+$('#restart').onclick=()=>{
+  if(confirm('¿Reiniciar todo el intento y borrar el puntaje actual?')){
+    state={current:0,answers:{}}; save(); el.final.classList.remove('show'); render(); window.scrollTo({top:0,behavior:'smooth'});
+  }
+};
+$('#share').onclick=async()=>{
+  const payload={title:'Cuestionario Energía Solar Térmica',text:'Cuestionario interactivo de 40 preguntas del primer turno.',url:location.href};
+  try{
+    if(navigator.share) await navigator.share(payload);
+    else{await navigator.clipboard.writeText(location.href);alert('Enlace copiado al portapapeles.');}
+  }catch(e){}
+};
+render();
+</script>
+</body>
+</html>
