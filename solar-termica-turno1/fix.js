@@ -1,0 +1,1 @@
+const FIX={5:'C',6:'E',7:'A',25:'E',34:'A'};window.QUESTIONS=(window.QUESTIONS||[]);window.QUESTIONS.forEach(q=>{if(FIX[q.n])q.a=FIX[q.n]});
